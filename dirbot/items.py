@@ -12,3 +12,6 @@ class Website(Item):
 class WebsiteLoader(XPathItemLoader):
     default_item_class = Website
     default_output_processor = TakeFirst()
+
+
+class Investor(Item):

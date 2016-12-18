@@ -1,7 +1,7 @@
 from scrapy.spider import BaseSpider
 from scrapy.selector import HtmlXPathSelector
 
-from dirbot.items import WebsiteLoader
+from dirbot.items import WebsiteLoader, Website
 
 
 class DmozSpider(BaseSpider):
@@ -20,12 +20,28 @@ class DmozSpider(BaseSpider):
         @url http://www.dmoz.org/Computers/Programming/Languages/Python/Resources/
         @scrapes name
         """
-        hxs = HtmlXPathSelector(response)
-        sites = hxs.select('//ul[@class="directory-url"]/li')
+        #
+        # hxs = HtmlXPathSelector(response)
+        # sites = hxs.select('//ul[@class="directory-url"]/li')
+        #
+        # for site in sites:
+        #     il = WebsiteLoader(response=response, selector=site)
+        #     il.add_xpath('name', 'a/text()')
+        #     il.add_xpath('url', 'a/@href')
+        #     il.add_xpath('description', 'text()', re='-\s([^\n]*?)\\n')
+        #     yield il.load_item()
+
+        sites = response.css('#site-list-content > div.site-item > div.title-and-desc')
+        items = []
 
         for site in sites:
-            il = WebsiteLoader(response=response, selector=site)
-            il.add_xpath('name', 'a/text()')
-            il.add_xpath('url', 'a/@href')
-            il.add_xpath('description', 'text()', re='-\s([^\n]*?)\\n')
-            yield il.load_item()
+            item = Website()
+            item['name'] = site.css(
+                'a > div.site-title::text').extract_first().strip()
+            item['url'] = site.xpath(
+                'a/@href').extract_first().strip()
+            item['description'] = site.css(
+                'div.site-descr::text').extract_first().strip()
+            items.append(item)
+            yield item
+        # return items
