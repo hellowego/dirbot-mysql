@@ -14,5 +14,9 @@ class Investor(BaseSpider):
         ]
 
     def parse(self, response):
-        sites = response.css('#company-list')
+        sites = response.css('#company-list > li > div.txt > h3')
         for site in sites:
+            item = Investor()
+            item['name'] = site.css(
+                'a.f16::text').extract_first().strip()
+            print item['name']

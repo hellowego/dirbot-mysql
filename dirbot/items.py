@@ -15,3 +15,6 @@ class WebsiteLoader(XPathItemLoader):
 
 
 class Investor(Item):
+    city = Field()
+    name = Field()
+    desc = Field()
