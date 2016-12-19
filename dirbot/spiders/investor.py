@@ -15,7 +15,8 @@ class Investor(BaseSpider):
 
     # 解析投资机构城市、简介、公司名
     def parse(self, response):
-        sites = response.css('#company-list > li > div.txt')
+        # sites = response.css('#company-list > li > div.txt')
+        sites = response.css('#company-list > li')
         for site in sites:
             item = InvestorItem()
             item['city'] = site.xpath(
@@ -24,4 +25,8 @@ class Investor(BaseSpider):
                 'a.f16::text').extract_first().strip()
             item['company_desc'] = site.css(
                 'div.desc::text').extract_first().strip()
+            str = site.css(
+                'a::attr(href)').extract_first().strip()
+            str1 = site.css(
+                'a::attr(href)').extract_first().strip()
             yield item
