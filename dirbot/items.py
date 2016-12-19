@@ -14,7 +14,7 @@ class WebsiteLoader(XPathItemLoader):
     default_output_processor = TakeFirst()
 
 
-class Investor(Item):
+class InvestorItem(Item):
     city = Field()
-    name = Field()
-    desc = Field()
+    company_name = Field()
+    company_desc = Field()
