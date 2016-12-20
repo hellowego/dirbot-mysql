@@ -18,4 +18,5 @@ class InvestorItem(Item):
     city = Field()
     company_name = Field()
     company_desc = Field()
+    detail_url = Field()
     img_url = Field()

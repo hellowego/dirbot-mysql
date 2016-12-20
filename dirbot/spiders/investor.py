@@ -27,6 +27,8 @@ class Investor(BaseSpider):
                 'div.desc::text').extract_first().strip()
             str = site.css(
                 'a::attr(href)').extract_first().strip()
+            item['detail_url'] = str
             str1 = site.css(
-                'a::attr(href)').extract_first().strip()
+                'img::attr(src)').extract_first().strip()
+            item['img_url'] = str1
             yield item

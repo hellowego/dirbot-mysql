@@ -1,9 +1,12 @@
+#!/usr/bin/env python
+#-*- coding: UTF-8 -*-
 from datetime import datetime
 from hashlib import md5
 from scrapy import log
 from scrapy.exceptions import DropItem
 from twisted.enterprise import adbapi
-
+from dbSession import DBSession
+from dbModel import InvestorModel
 
 class FilterWordsPipeline(object):
     """A pipeline for filtering out items which contain certain words in their
@@ -19,6 +22,22 @@ class FilterWordsPipeline(object):
                 raise DropItem("Contains forbidden word: %s" % word)
         else:
             return item
+
+class DownloadImg(object):
+    '''
+    下载投资公司头像图片
+    '''
+    def process_item(self, item, spider):
+        img_url = item.get('img_url')
+        return item
+
+    def img_exist(self):
+        session = DBSession()
+        # count = session.execute('select * from investor where guid = :guid', {'guid' : 1})
+        count = session.query(InvestorModel).filter(InvestorModel.guid == '1').count()
+        session.close()
+        print count
+
 
 
 class RequiredFieldsPipeline(object):
@@ -99,3 +118,7 @@ class MySQLStorePipeline(object):
         """Generates an unique identifier for a given item."""
         # hash based solely in the url field
         return md5(item['url']).hexdigest()
+
+if __name__ == "__main__":
+    dl = DownloadImg()
+    dl.img_exist()
