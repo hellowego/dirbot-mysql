@@ -7,6 +7,8 @@ from scrapy.exceptions import DropItem
 from twisted.enterprise import adbapi
 from dbSession import DBSession
 from dbModel import InvestorModel
+import os
+import urllib
 
 class FilterWordsPipeline(object):
     """A pipeline for filtering out items which contain certain words in their
@@ -31,6 +33,17 @@ class DownloadImg(object):
         img_url = item.get('img_url')
         return item
 
+    def download(self, img_name, img_url, path):
+        if not os.path.exists(path):
+            os.mkdir(path)
+        homedir = os.path.join(path, img_name)
+        if not os.path.exists(homedir):
+            with open(homedir, 'wb') as img_writer:
+                conn = urllib.urlopen(img_url) #下载图片
+                img_writer.write(conn.read())
+
+
+
     def img_exist(self):
         session = DBSession()
         # count = session.execute('select * from investor where guid = :guid', {'guid' : 1})
@@ -38,6 +51,14 @@ class DownloadImg(object):
         session.close()
         print count
 
+class InvestorRecord(object):
+    def process_item(self, item, spider):
+        # 获取图片url
+        img_url = item.get('img_url')
+        if img_url is not None :
+            pass
+
+        return item
 
 
 class RequiredFieldsPipeline(object):
@@ -121,4 +142,8 @@ class MySQLStorePipeline(object):
 
 if __name__ == "__main__":
     dl = DownloadImg()
-    dl.img_exist()
+    img_name = 'test.jpg'
+    img_url = 'http://pic.pedata.cn/Logo/Logo/ab55f75f-7d36-4939-aade-83691372b86d.gif'
+    path = os.getcwd()
+    dl.download(img_name, img_url, path)
+    # dl.img_exist()

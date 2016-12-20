@@ -21,7 +21,7 @@ class Investor(BaseSpider):
             item = InvestorItem()
             item['city'] = site.xpath(
                 './/span[1]/text()').extract_first().strip()
-            item['company_name'] = site.css(
+            item['name'] = site.css(
                 'a.f16::text').extract_first().strip()
             item['company_desc'] = site.css(
                 'div.desc::text').extract_first().strip()
