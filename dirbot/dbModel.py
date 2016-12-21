@@ -16,8 +16,10 @@ class InvestorModel(BaseModel):
     Investor model
     """
     __tablename__ = "Investor"
+
     guid = Column(String(30), primary_key = True, nullable = False)	# guid
     name = Column(String(100), nullable = True)
+    name_abbr = Column(String(20), nullable = True)
     city = Column(String(20), nullable = True)
     status = Column(TINYINT, nullable = True)
     company_desc = Column(TEXT, nullable = False)

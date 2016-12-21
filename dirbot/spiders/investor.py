@@ -23,6 +23,8 @@ class Investor(BaseSpider):
                 './/span[1]/text()').extract_first().strip()
             item['name'] = site.css(
                 'a.f16::text').extract_first().strip()
+            item['name_abbr'] = site.xpath(
+                './/span[2]/a/text()').extract_first().strip()
             item['company_desc'] = site.css(
                 'div.desc::text').extract_first().strip()
             str = site.css(

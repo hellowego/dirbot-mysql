@@ -35,7 +35,16 @@ class DownloadImg(object):
     def process_item(self, item, spider):
         # 如果没有企业头像，则不需要下载，采用默认头像
         img_url = item.get('img_url')
+        if self.get_imgName(img_url) == 'noimage.png' :
+            return item
+        path = os.path.join(os.getcwd(), 'company-icon')
+        self.download(item['guid'], img_url, path)
         return item
+
+    def get_imgName(self, url):
+        img_parse = urlparse.urlparse(url)
+        return os.path.basename(img_parse.path)
+
 
     def download(self, img_name, img_url, path):
         if not os.path.exists(path):
@@ -52,6 +61,24 @@ class DownloadImg(object):
         count = session.query(InvestorModel).filter(InvestorModel.guid == '1').count()
         session.close()
         print count
+
+class MySQLStoreInvestorPipeline(object):
+    def process_item(self, item, spider):
+        investor = InvestorModel(guid =item['guid']
+                                 , city = item['city']
+                                 , company_desc = item['company_desc']
+                                 , detail_url = item['detail_url']
+                                 , img_name = item['img_name']
+                                 , img_url = item['img_url']
+                                 , img_location = item['img_location']
+                                 , introduce = item['introduce']
+                                 , name = item['name']
+                                 , name_abbr = item['name_abbr']
+                                 )
+        session = DBSession()
+        session.merge(investor)
+        session.commit()
+        session.close()
 
 class InvestorRecord(object):
     def process_item(self, item, spider):
