@@ -8,7 +8,7 @@ class Util(object):
     '''
 
     @classmethod
-    def _get_guid(self, str):
+    def get_guid(self, str):
         """Generates an unique identifier for a given item."""
         # hash based solely in the url field
         return md5(str).hexdigest()

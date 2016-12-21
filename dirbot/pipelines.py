@@ -9,27 +9,31 @@ from dbSession import DBSession
 from dbModel import InvestorModel
 import os
 import urllib
+import urlparse
+import util
 
-class FilterWordsPipeline(object):
-    """A pipeline for filtering out items which contain certain words in their
-    description"""
 
-    # put all words in lowercase
-    words_to_filter = ['politics', 'religion']
+class RequiredFieldsPipeline(object):
+    """A pipeline to ensure the item have the required fields."""
+
+    required_fields = ('name', 'company_desc', 'detail_url', 'img_url')
 
     def process_item(self, item, spider):
-        for word in self.words_to_filter:
-            desc = item.get('description') or ''
-            if word in desc.lower():
-                raise DropItem("Contains forbidden word: %s" % word)
-        else:
-            return item
+        # 检查必须的字段
+        for field in self.required_fields:
+            if not item.get(field):
+                raise DropItem("Field '%s' missing: %r" % (field, item))
+
+        # 取公司名的md5作为guid和公司图标的名字
+        item['guid'] = util.get_guid(item['name'])
+        return item
 
 class DownloadImg(object):
     '''
     下载投资公司头像图片
     '''
     def process_item(self, item, spider):
+        # 如果没有企业头像，则不需要下载，采用默认头像
         img_url = item.get('img_url')
         return item
 
@@ -41,8 +45,6 @@ class DownloadImg(object):
             with open(homedir, 'wb') as img_writer:
                 conn = urllib.urlopen(img_url) #下载图片
                 img_writer.write(conn.read())
-
-
 
     def img_exist(self):
         session = DBSession()
@@ -60,17 +62,25 @@ class InvestorRecord(object):
 
         return item
 
+class FilterWordsPipeline(object):
+    """A pipeline for filtering out items which contain certain words in their
+    description"""
 
-class RequiredFieldsPipeline(object):
-    """A pipeline to ensure the item have the required fields."""
-
-    required_fields = ('name', 'description', 'url')
+    # put all words in lowercase
+    words_to_filter = ['politics', 'religion']
 
     def process_item(self, item, spider):
-        for field in self.required_fields:
-            if not item.get(field):
-                raise DropItem("Field '%s' missing: %r" % (field, item))
-        return item
+        for word in self.words_to_filter:
+            desc = item.get('description') or ''
+            if word in desc.lower():
+                raise DropItem("Contains forbidden word: %s" % word)
+        else:
+            return item
+
+
+
+
+
 
 
 class MySQLStorePipeline(object):
@@ -145,5 +155,15 @@ if __name__ == "__main__":
     img_name = 'test.jpg'
     img_url = 'http://pic.pedata.cn/Logo/Logo/ab55f75f-7d36-4939-aade-83691372b86d.gif'
     path = os.getcwd()
-    dl.download(img_name, img_url, path)
+    # dl.download(img_name, img_url, path)
+    s1 = urlparse.urlparse(img_url)
+    s2 = s1.path
+    print s1
+    print s2
+    s3 = os.path.basename(s2)
+    print s3
+    # 分离扩展名
+    s4 = os.path.splitext(s2)
+    print s4[0], s4[1]
+
     # dl.img_exist()
