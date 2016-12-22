@@ -21,4 +21,7 @@ class InvestorItem(Item):
     company_desc = Field()
     detail_url = Field()
     img_url = Field()
+    img_name = Field()
+    img_location = Field()
+    introduce = Field()
     guid = Field()

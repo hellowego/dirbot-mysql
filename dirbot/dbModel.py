@@ -3,6 +3,8 @@
 
 from dbSession import BaseModel, DBSession
 from sqlalchemy import Column, String, Integer
+from datetime import datetime
+
 
 from sqlalchemy.dialects.mysql import \
     BIGINT, BINARY, BIT, BLOB, BOOLEAN, CHAR, DATE, \
@@ -21,12 +23,12 @@ class InvestorModel(BaseModel):
     name = Column(String(100), nullable = True)
     name_abbr = Column(String(20), nullable = True)
     city = Column(String(20), nullable = True)
-    status = Column(TINYINT, nullable = True)
+    status = Column(TINYINT, nullable = True, default = 1)
     company_desc = Column(TEXT, nullable = False)
     introduce = Column(TEXT, nullable = False)
     detail_url = Column(String(100), nullable = True)
     img_url = Column(String(100), nullable = True)
     img_name = Column(String(100), nullable = True)
     img_location = Column(String(100), nullable = True)
-    add_time  = Column(DATETIME, nullable = False)
-    update_time  = Column(DATETIME, nullable = False)
+    add_time  = Column(DATETIME, nullable = True, default = datetime.now)
+    update_time  = Column(DATETIME, nullable = True, default = datetime.now)

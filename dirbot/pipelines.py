@@ -10,7 +10,7 @@ from dbModel import InvestorModel
 import os
 import urllib
 import urlparse
-import util
+import time
 
 
 class RequiredFieldsPipeline(object):
@@ -25,20 +25,31 @@ class RequiredFieldsPipeline(object):
                 raise DropItem("Field '%s' missing: %r" % (field, item))
 
         # 取公司名的md5作为guid和公司图标的名字
-        item['guid'] = util.get_guid(item['name'])
+        item['guid'] =self._get_guid(item)
         return item
 
-class DownloadImg(object):
+    def _get_guid(self, item):
+        """Generates an unique identifier for a given item."""
+        # hash based solely in the url field
+        str = item['name']
+        return md5(str.encode("utf8")).hexdigest()
+
+class DownloadImgPipeline(object):
     '''
     下载投资公司头像图片
     '''
     def process_item(self, item, spider):
         # 如果没有企业头像，则不需要下载，采用默认头像
         img_url = item.get('img_url')
-        if self.get_imgName(img_url) == 'noimage.png' :
+        item['img_location'] = u'company-icon'
+        web_img_name = self.get_imgName(img_url)
+        if web_img_name == 'noimage.png' :
+            item['img_name'] = 'noimage.png'
             return item
-        path = os.path.join(os.getcwd(), 'company-icon')
-        self.download(item['guid'], img_url, path)
+        img_suffix = os.path.splitext(web_img_name)[1]
+        item['img_name'] = item['guid'] + img_suffix
+        path = os.path.join(os.getcwd(), item['img_location'])
+        self.download(item['img_name'], img_url, path)
         return item
 
     def get_imgName(self, url):
@@ -54,6 +65,8 @@ class DownloadImg(object):
             with open(homedir, 'wb') as img_writer:
                 conn = urllib.urlopen(img_url) #下载图片
                 img_writer.write(conn.read())
+                img_writer.close()
+
 
     def img_exist(self):
         session = DBSession()
@@ -71,7 +84,6 @@ class MySQLStoreInvestorPipeline(object):
                                  , img_name = item['img_name']
                                  , img_url = item['img_url']
                                  , img_location = item['img_location']
-                                 , introduce = item['introduce']
                                  , name = item['name']
                                  , name_abbr = item['name_abbr']
                                  )
@@ -178,11 +190,10 @@ class MySQLStorePipeline(object):
         return md5(item['url']).hexdigest()
 
 if __name__ == "__main__":
-    dl = DownloadImg()
-    img_name = 'test.jpg'
-    img_url = 'http://pic.pedata.cn/Logo/Logo/ab55f75f-7d36-4939-aade-83691372b86d.gif'
-    path = os.getcwd()
-    # dl.download(img_name, img_url, path)
+    dl = DownloadImgPipeline()
+
+    img_url = u'http://pic.pedata.cn/Logo/Logo/ab55f75f-7d36-4939-aade-83691372b86d.gif'
+
     s1 = urlparse.urlparse(img_url)
     s2 = s1.path
     print s1
@@ -192,5 +203,16 @@ if __name__ == "__main__":
     # 分离扩展名
     s4 = os.path.splitext(s2)
     print s4[0], s4[1]
+    s5 = u'hello您好'
+    s6 = md5(s5.encode('utf8')).hexdigest()
+    print s5, s6
+    print s6 + '.png'
+    img_name = s6 + s4[1]
+    path = os.getcwd()
+    img_location = u'company-icon'
+    path = os.path.join(os.getcwd(), img_location)
+    print img_name
+    print path
+    dl.download(img_name, img_url, path)
 
     # dl.img_exist()

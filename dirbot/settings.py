@@ -6,8 +6,8 @@ DEFAULT_ITEM_CLASS = 'dirbot.items.Website'
 
 ITEM_PIPELINES = {
     'dirbot.pipelines.RequiredFieldsPipeline': 1,
-    'dirbot.pipelines.FilterWordsPipeline' :2,
-    'dirbot.pipelines.MySQLStorePipeline':3,
+    'dirbot.pipelines.DownloadImgPipeline':3,
+    'dirbot.pipelines.MySQLStoreInvestorPipeline':4,
 }
 
 MYSQL_HOST = 'localhost'
