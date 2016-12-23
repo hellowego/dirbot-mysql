@@ -15,14 +15,22 @@ class Investor(BaseSpider):
 
     def start_requests(self):
         # 1-10页没有公司头像的公司都没采集到
-        page_num = 11
-        while page_num < 100:
+        # 101 - 201
+        # 201 - 201     4019
+        # 202 - 300     5995  有四条重复
+        # 79197f1cfc1caebdbbbb453cb5a063ee, 95238540a5d97d7cc95e94b93be475dd, 7b37f246ebc639f9ea847622cd01a624, 1b8e761d617b32fb59d1d520b4d55812,
+        # 301 - 301     6015  1886  4150
+        page_num = 301
+        while page_num < 302:
             print u'当前的页面编号: ', page_num
             str_page_name = str(page_num)+'/'
-            url = self.start_urls[0] + str_page_name
+            if page_num == 1 :
+                url = self.start_urls[0]
+            else:
+                url = self.start_urls[0] + str_page_name
             yield self.make_requests_from_url(url)
             page_num += 1
-            time.sleep(5)
+            time.sleep(3)
 
 
 
@@ -35,10 +43,18 @@ class Investor(BaseSpider):
             try:
                 item['name'] = site.css(
                     'a.f16::text').extract_first().strip()
-                item['name_abbr'] = site.xpath(
-                    './/span/a/text()').extract_first().strip()
-                item['company_desc'] = site.css(
-                    'div.desc::text').extract_first().strip()
+                try:
+                    item['name_abbr'] = site.xpath(
+                        './/span/a/text()').extract_first().strip()
+                except:
+                    item['name_abbr'] = ''
+
+                try:
+                    item['company_desc'] = site.css(
+                        'div.desc::text').extract_first().strip()
+                except:
+                    item['company_desc'] = ''
+
                 str = site.css(
                     'a::attr(href)').extract_first().strip()
                 item['detail_url'] = str

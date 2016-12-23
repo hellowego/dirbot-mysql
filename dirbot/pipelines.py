@@ -6,7 +6,7 @@ from scrapy import log
 from scrapy.exceptions import DropItem
 from twisted.enterprise import adbapi
 from dbSession import DBSession
-from dbModel import InvestorModel
+from dbModel import InvestorModel, InvestorTemModelTem
 import os
 import urllib
 import urlparse
@@ -16,7 +16,7 @@ import time
 class RequiredFieldsPipeline(object):
     """A pipeline to ensure the item have the required fields."""
 
-    required_fields = ('name', 'company_desc', 'detail_url', 'img_url')
+    required_fields = ('name', 'detail_url', 'img_url')
 
     def process_item(self, item, spider):
         # 检查必须的字段
@@ -87,8 +87,19 @@ class MySQLStoreInvestorPipeline(object):
                                  , name = item['name']
                                  , name_abbr = item['name_abbr']
                                  )
+        investorTemModelTem = InvestorTemModelTem(guid =item['guid']
+                                 , city = item['city']
+                                 , company_desc = item['company_desc']
+                                 , detail_url = item['detail_url']
+                                 , img_name = item['img_name']
+                                 , img_url = item['img_url']
+                                 , img_location = item['img_location']
+                                 , name = item['name']
+                                 , name_abbr = item['name_abbr']
+                                 )
         session = DBSession()
         session.merge(investor)
+        session.add(investorTemModelTem)
         session.commit()
         session.close()
 

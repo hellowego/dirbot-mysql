@@ -32,3 +32,27 @@ class InvestorModel(BaseModel):
     img_location = Column(String(100), nullable = True)
     add_time  = Column(DATETIME, nullable = True, default = datetime.now)
     update_time  = Column(DATETIME, nullable = True, default = datetime.now)
+
+
+class InvestorTemModelTem(BaseModel):
+    """
+    InvestorModelTem model
+    """
+    __tablename__ = "Investor_tem"
+
+    guid = Column(String(30), primary_key = True, nullable = False)	# guid
+    name = Column(String(100), nullable = True)
+    name_abbr = Column(String(20), nullable = True)
+    city = Column(String(20), nullable = True)
+    status = Column(TINYINT, nullable = True, default = 1)
+    company_desc = Column(TEXT, nullable = False)
+    introduce = Column(TEXT, nullable = False)
+    detail_url = Column(String(100), nullable = True)
+    img_url = Column(String(100), nullable = True)
+    img_name = Column(String(100), nullable = True)
+    img_location = Column(String(100), nullable = True)
+    add_time  = Column(DATETIME, nullable = True, default = datetime.now)
+    update_time  = Column(DATETIME, nullable = True, default = datetime.now)
+
+
+
