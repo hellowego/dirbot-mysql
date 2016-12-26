@@ -25,3 +25,4 @@ class InvestorItem(Item):
     img_location = Field()
     introduce = Field()
     guid = Field()
+    source_url = Field()

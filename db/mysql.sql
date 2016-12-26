@@ -26,7 +26,7 @@ CREATE TABLE investor (
 
 DROP TABLE if EXISTS investor_tem;
 CREATE TABLE investor_tem (
-  guid CHAR(32) PRIMARY KEY,
+  guid CHAR(32)  ,
   name VARCHAR (100),
   name_abbr VARCHAR (50),
   city VARCHAR (20),

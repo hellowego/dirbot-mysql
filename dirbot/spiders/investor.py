@@ -41,6 +41,7 @@ class Investor(BaseSpider):
         for site in sites:
             item = InvestorItem()
             try:
+                item['source_url'] = response.url
                 item['name'] = site.css(
                     'a.f16::text').extract_first().strip()
                 try:

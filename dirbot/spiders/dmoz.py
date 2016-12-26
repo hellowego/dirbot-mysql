@@ -33,6 +33,7 @@ class DmozSpider(BaseSpider):
 
         sites = response.css('#site-list-content > div.site-item > div.title-and-desc')
         items = []
+        url = response.url
 
         for site in sites:
             item = Website()
