@@ -1,7 +1,7 @@
 from scrapy.spider import BaseSpider
 from scrapy.selector import HtmlXPathSelector
 
-from dirbot.items import WebsiteLoader, Website
+from rong.items import WebsiteLoader, Website
 
 
 class DmozSpider(BaseSpider):
